@@ -205,7 +205,7 @@ pcbs:
           shift: [2px, 0]
 
       jst: 
-        what: jstph
+        what: rev_jstph
         params:
           pos: VCC
           neg: GND

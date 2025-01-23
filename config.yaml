@@ -1,0 +1,246 @@
+units:
+  kx: cx
+  ky: cy
+  px: kx + 2
+  py: ky + 2
+points:
+  key.padding: cy
+  zones:
+    main:
+      rows:
+        bottom.row_net: P16
+        home.row_net: P14
+        top.row_net: P15
+        num.row_net: P18
+      columns:
+        lefty:
+          key:
+            col_net: P2
+            spread: cx
+        pinky:
+          key:
+            col_net: P3
+            stagger: 2
+            spread: cx
+        ring:
+          key:
+            col_net: P4
+            stagger: 4
+            spread: cx
+        middle:
+          key:
+            col_net: P5
+            stagger: 1.5
+            spread: cx
+        index:
+          key:
+            col_net: P6
+            stagger: -2
+            spread: cx 
+        inner:
+          key:
+            col_net: P7
+            stagger: -2
+            spread: cx
+
+    thumb:
+      anchor:
+        ref: main_ring_bottom
+        shift: [0.5cx, -1.15cy]
+      rows.unique.row_net: D10
+      columns:
+        inner.key:
+            col_net: P5
+            spread: cx
+        home.key:
+            col_net: P4
+            spread: cx
+        outer.key:
+            col_net: P3
+            spread: cx
+            stagger: -2
+
+    lastrow:
+      anchor:
+        ref: main_inner_top
+        shift: [1cx, -1.5cy]
+      rows.lastrow.row_net: P10
+      rows: 
+        top.key:
+          col_net: P6
+
+    lastthumb:
+      anchor:
+        ref: main_inner_bottom
+        shift: [0.9cx, -1.2cy]
+      rows.hey.row_net: P10
+      columns: 
+        thumb.key:
+          col_net: P6
+          height: 1.5cy
+          rotate: -30
+
+outlines:
+  raw:
+    -   what: rectangle
+        where: true
+        size: [kx, ky]
+  keys:
+    -   what: rectangle
+        where: true
+        size: [kx-0.5,ky-0.5]
+
+  board:
+    -   what: polygon
+        operation: stack
+        fillet: 2
+        points:
+          - ref: lastthumb_thumb_hey
+            shift: [0.5px, -0.75py]
+          - ref: lastthumb_thumb_hey
+            shift: [-0.5px, -0.75py]
+
+          - ref: thumb_outer_unique
+            shift: [0.45px, -0.5py]
+          - ref: thumb_outer_unique
+            shift: [-0.5px, -0.5py]
+          - ref: thumb_outer_unique
+            shift: [-0.5px, -0.4py]
+
+          - ref: thumb_inner_unique
+            shift: [-0.5px, -0.5py]
+          - ref: thumb_inner_unique
+            shift: [-0.5px, 0.32py]
+
+          - ref: main_pinky_bottom
+            shift: [-0.4px, -0.5py]
+          - ref: main_pinky_bottom
+            shift: [-0.4px, -0.6py]
+
+          - ref: main_lefty_bottom
+            shift: [-0.5px, -0.5py]
+
+          - ref: main_lefty_num
+            shift: [-0.5px, 0.5py]
+          - ref: main_lefty_num
+            shift: [0.4px, 0.5py]
+          - ref: main_lefty_num
+            shift: [0.4px, 0.6py]
+
+
+          - ref: main_pinky_num
+            shift: [0.4px, 0.5py]
+          - ref: main_pinky_num
+            shift: [0.4px, 0.6py]
+
+          - ref: main_ring_num
+            shift: [-0.5px, 0.5py]
+          - ref: main_ring_num
+            shift: [0.4px, 0.5py]
+          - ref: main_ring_num
+            shift: [0.4px, 0.6py]
+
+          - ref: main_middle_num
+            shift: [-0.5px, 0.53py]
+          - ref: main_middle_num
+            shift: [0.5px, 0.53py]
+          - ref: main_middle_num
+            shift: [0.5px, 0.4py]            
+          
+          - ref: main_index_num
+            shift: [0.5px, 0.5py] 
+          - ref: main_index_num
+            shift: [0.5px, 0.4py] 
+          
+          - ref: main_inner_num
+            shift: [1.8px, 0.5py]        
+
+          - ref: lastthumb_thumb_hey
+            shift: [0.7px, 0.75py]
+
+  combo:
+    - name: board
+    - operation: subtract
+      name: keys
+
+pcbs:
+  tutorial:
+    outlines:
+      main:
+        outline: board
+    footprints:
+      choc_hotswap:
+        what: choc
+        where: true
+        params:
+          keycaps: true
+          reverse: true
+          hotswap: true
+          from: "{{col_net}}"
+          to: "{{colrow}}"
+
+      diode:
+        what: diode
+        where: true
+        params:
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [0, -5]
+        
+      nicenano: 
+        what: mcu_nice_nano
+        where: 
+          ref: main_inner_num
+        adjust: 
+          shift: [2px, 0py]
+
+      reset: 
+        what: rev_button
+        params: 
+          from: GND
+          to: RST
+        where:
+          ref: main_inner_num
+          shift: [2px, 0]
+
+      jst: 
+        what: jstph
+        params:
+          pos: VCC
+          neg: GND
+        where:
+          ref: main_inner_num
+          shift: [2px, -2py]
+
+      battery_switch:
+        what: rev_slider
+        params:
+            from: BPOS
+            to: RAW
+        where: 
+          ref: main_inner_num
+          shift: [2px, -3py]
+
+      holeTopInnerLeft:
+        what: mounting_hole_npth
+        where:
+          ref: [main_lefty_num]
+          shift: [0.5kx, -0.3ky]
+      holeBottomInnerLeft:
+        what: mounting_hole_npth
+        where:
+          ref: [main_lefty_bottom]
+          shift: [0.5kx, -0.3ky]
+      holeTopRight:
+        what: mounting_hole_npth
+        where:
+          ref: [thumb_inner_unique]
+          shift: [0.5kx, -0.3ky]
+      holeBottomRight:
+        what: mounting_hole_npth
+        where:
+          ref: [main_inner_num]
+          shift: [0.5kx, -0.3ky]
+
+
